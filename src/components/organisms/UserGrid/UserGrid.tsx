@@ -1,4 +1,4 @@
-import UserCard from "./UserCard";
+import UserCard from "../UserCard";
 
 const users = [
   { initials: "JD", name: "John Doe", email: "john.doe@example.com", status: "active", dob: "1990-05-15" },
