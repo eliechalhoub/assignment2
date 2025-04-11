@@ -1,4 +1,4 @@
-import { InputProps } from "./Input.type";
+import { InputProps } from "./Input.type.ts";
 
 const Input = ({ type, placeholder, className, value, onChange }: InputProps) => {
   return (
