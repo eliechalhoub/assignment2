@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { useAuthStore } from '../store/UseAuthStore';
 import { useNavigate } from 'react-router-dom';
+import { useThemeStore } from '../store/ThemeStore';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,18 +13,19 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const setAuth = useAuthStore((state) => state.setAuth);
+  const { darkMode } = useThemeStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (email === '' || password === '') {
       setError('Please fill out both fields.');
       return;
     }
-  
+
     setError(null);
     setLoading(true);
-  
+
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -35,55 +37,55 @@ const LoginPage: React.FC = () => {
           },
         }),
       });
-  
+
       const result = await response.json();
-  
+
       if (!response.ok || result.status !== 200) {
         throw new Error(result?.message || 'Login failed');
       }
-  
+
       const { accessToken, expiresIn } = result.result?.data || {};
-  
+
       if (!accessToken || !expiresIn) {
         throw new Error('Invalid response from server');
       }
-  
+
       setAuth(accessToken, expiresIn);
-  
-      console.log('Login successful:', accessToken); 
+      console.log('Login successful:', accessToken);
       navigate('/dashboard');
-  
+
     } catch (err: any) {
       const rawMessage = err.message || 'Login failed';
       const isInvalid = rawMessage.toLowerCase().includes('login failed');
-    
+
       const message = isInvalid
         ? 'Email or password is incorrect.'
         : rawMessage;
-    
+
       setError(message);
       console.error('Login failed:', rawMessage);
-    }
-    
-     finally {
+    } finally {
       setLoading(false);
     }
   };
-  
 
   return (
-    <div className="bg-[#F3F4F6] h-screen flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full sm:w-96">
-        <h1 className="text-[#1E2939] text-2xl font-bold mb-6 text-center">Login</h1>
+    <div className={`${darkMode ? 'bg-gray-900' : 'bg-[#F3F4F6]'} h-screen flex justify-center items-center`}>
+      <div className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} p-8 rounded-lg shadow-md w-full sm:w-96`}>
+        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-[#545D6C] font-semibold text-sm mb-2">Email</label>
+            <label className={`block font-semibold text-sm mb-2 ${darkMode ? 'text-gray-200' : 'text-[#545D6C]'}`}>
+              Email
+            </label>
             <input
               type="email"
-              className="w-full p-3 border border-gray-300 rounded-md"
+              className={`w-full p-3 rounded-md border outline-none ${darkMode
+                ? 'bg-gray-700 text-white border-gray-600 placeholder-gray-400'
+                : 'bg-white text-black border-gray-300 placeholder-gray-500'}`}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder='example@gmail.com'
@@ -91,11 +93,15 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-[#545D6C] font-semibold text-sm mb-2">Password</label>
+            <label className={`block font-semibold text-sm mb-2 ${darkMode ? 'text-gray-200' : 'text-[#545D6C]'}`}>
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
-                className="w-full p-3 border border-gray-300 rounded-md pr-10"
+                className={`w-full p-3 rounded-md pr-10 border outline-none ${darkMode
+                  ? 'bg-gray-700 text-white border-gray-600 placeholder-gray-400'
+                  : 'bg-white text-black border-gray-300 placeholder-gray-500'}`}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -104,9 +110,9 @@ const LoginPage: React.FC = () => {
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
               >
                 {showPassword ? (
-                  <FiEyeOff className="text-[#545D6C] text-xl" />
+                  <FiEyeOff className={`${darkMode ? 'text-gray-300' : 'text-[#545D6C]'} text-xl`} />
                 ) : (
-                  <FiEye className="text-[#545D6C] text-xl" />
+                  <FiEye className={`${darkMode ? 'text-gray-300' : 'text-[#545D6C]'} text-xl`} />
                 )}
               </div>
             </div>
@@ -119,7 +125,9 @@ const LoginPage: React.FC = () => {
               className={`py-3 px-6 font-semibold rounded-md transition duration-200 cursor-pointer ${
                 loading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-primary text-white hover:bg-[rgb(40,70,170)]'
+                  : darkMode
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-primary text-white hover:bg-[rgb(40,70,170)]'
               }`}
             >
               {loading ? 'Logging in...' : 'Login'}

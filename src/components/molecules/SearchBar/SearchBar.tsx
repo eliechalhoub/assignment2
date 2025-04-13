@@ -1,3 +1,4 @@
+import { useThemeStore } from "../../../store/ThemeStore";
 import Input from "../../atoms/Input";
 import { ChangeEvent } from "react";
 
@@ -6,6 +7,7 @@ type Props = {
 };
 
 const SearchBar = ({ onSearch }: Props) => {
+  const { darkMode } = useThemeStore();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onSearch(e.target.value);
   };
@@ -15,7 +17,11 @@ const SearchBar = ({ onSearch }: Props) => {
       <Input
         type="search"
         placeholder="Search users..."
-        className="mt-5"
+        className={`mt-5 
+          ${darkMode 
+            ? "bg-gray-800 text-white border-gray-700 placeholder-gray-400" 
+            : "bg-white text-black border-gray-300 placeholder-gray-500"}
+        `}
         onChange={handleChange}
       />
     </div>

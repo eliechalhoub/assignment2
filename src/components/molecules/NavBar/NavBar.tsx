@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../../atoms/Button";
 import IconButton from "../../atoms/IconButton";
+import { useThemeStore } from "../../../store/ThemeStore";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const { darkMode, toggleDarkMode } = useThemeStore();
 
   const handleLogout = () => {
     localStorage.removeItem("auth-storage");
@@ -26,7 +28,7 @@ const NavBar = () => {
           onClick={handleLogout}
           className="bg-red-500 text-white hover:bg-red-600 cursor-pointer"
         />
-        <IconButton onClick={() => {}} />
+        <IconButton onClick={toggleDarkMode} />
       </div>
     </nav>
   );
