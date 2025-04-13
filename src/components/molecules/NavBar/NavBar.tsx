@@ -1,7 +1,17 @@
+import { useNavigate } from "react-router-dom";
 import Button from "../../atoms/Button";
 import IconButton from "../../atoms/IconButton";
 
 const NavBar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth-storage");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
+
   return (
     <nav className="bg-primary text-white p-4 flex justify-between items-center shadow-md">
       <h1 className="text-xl font-semibold">User Management</h1>
@@ -13,7 +23,7 @@ const NavBar = () => {
         />
         <Button
           text="Logout"
-          onClick={() => {}}
+          onClick={handleLogout}
           className="bg-red-500 text-white hover:bg-red-600 cursor-pointer"
         />
         <IconButton onClick={() => {}} />
